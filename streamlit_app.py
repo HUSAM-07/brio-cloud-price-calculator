@@ -19,7 +19,7 @@ df = pd.DataFrame(data)
 
 # Streamlit app
 st.title("Azure VM Comparison")
-
+st.set_page_config(page_title="Brio's Internal Tool", page_icon="☁️")
 # Input fields
 currency = st.selectbox('Currency', ['US Dollar ($)', 'Euro (€)', 'British Pound (£)'])
 region = st.selectbox('Region', ['East US (Virginia) / eastus', 'West US (California) / westus', 'Central US (Iowa) / centralus'])
