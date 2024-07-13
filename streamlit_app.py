@@ -1,7 +1,12 @@
 import streamlit as st
 import pandas as pd
 
+st.set_page_config(page_title="Brio's Internal Tool", page_icon="☁️")
+
 st.title("Brio Technologies Internal Cloud Price Calculator")
+
+st.markdown("This is a simple calculator to help you estimate the cost of running your application on the 3 Cloud Services - AWS - Azure - GCP")
+            
 # Sample data similar to the provided image
 data = {
     'VM Name': ['Basic_A0', 'Basic_A1', 'Basic_A2', 'Basic_A3', 'Basic_A4', 'Standard_A0', 'Standard_A1', 'Standard_A1_v2', 'Standard_A2', 'Standard_A2_v2'],
@@ -19,7 +24,7 @@ df = pd.DataFrame(data)
 
 # Streamlit app
 st.title("Azure VM Comparison")
-st.set_page_config(page_title="Brio's Internal Tool", page_icon="☁️")
+
 # Input fields
 currency = st.selectbox('Currency', ['US Dollar ($)', 'Euro (€)', 'British Pound (£)'])
 region = st.selectbox('Region', ['East US (Virginia) / eastus', 'West US (California) / westus', 'Central US (Iowa) / centralus'])
