@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import json
 
-st.caption("This is a demo")
 
 option = st.selectbox(
     "Choose a Cloud Service Provider",
