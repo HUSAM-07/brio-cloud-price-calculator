@@ -1,49 +1,39 @@
 import streamlit as st
+import requests
 import pandas as pd
-import json
 
-
-option = st.selectbox(
-    "Choose a Cloud Service Provider",
-    ("GCP", "Azure", "AWS"),placeholder="Select the Cloud Platform You Want to Compare")
-
-st.write("You selected:", option)
-
-if option=="Azure":
-
-    # Load data
-    with open('azure.json', 'r') as file:
-        data = json.load(file)
-
-    # Extract relevant fields and create a DataFrame
+# Function to fetch Azure VM pricing data
+def fetch_azure_vm_prices():
+    url = "https://prices.azure.com/api/retail/prices?$filter=serviceName eq 'Virtual Machines'"
+    response = requests.get(url)
+    data = response.json()
+    
     items = data['Items']
-    df = pd.DataFrame(items)
+    return items
 
-    # Filter relevant columns and rename them
-    df_filtered = df[['serviceFamily', 'meterId', 'retailPrice', 'armRegionName']].copy()
-    df_filtered.columns = ['Family', 'ID', 'Price', 'Region']
+# Function to process Azure VM pricing data
+def process_azure_data(items):
+    azure_data = []
 
-    # Function to get the cheapest VM per region
-    def get_cheapest_vm_per_region(df):
-        return df.loc[df.groupby('Region')['Price'].idxmin()]
+    for item in items:
+        if 'serviceFamily' in item and item['serviceFamily'] == 'Compute':
+            azure_data.append([
+                item['productName'],
+                item['armSkuName'],
+                item['armRegionName'],
+                item['retailPrice']
+            ])
 
-    # Add a multiselect filter for regions
-    selected_regions = st.multiselect("Select Regions", options=df_filtered['Region'].unique())
+    df = pd.DataFrame(azure_data, columns=['Family', 'Core', 'Region', 'Price'])
+    return df
 
-    # Filter the DataFrame based on selected regions
-    filtered_df = df_filtered[df_filtered['Region'].isin(selected_regions)]
+# Streamlit app
+st.title("Cloud VM Price Comparison")
+st.header("Azure VM Pricing")
 
-    # Get the cheapest VM per selected region
-    cheapest_vms = get_cheapest_vm_per_region(filtered_df)
+# Fetch and process Azure VM pricing data
+azure_items = fetch_azure_vm_prices()
+azure_df = process_azure_data(azure_items)
 
-    # Display the DataFrame
-    st.title("Azure VM Pricing")
-    st.dataframe(cheapest_vms.sort_values(by=['Region', 'Price']),st.column_config)
-
-    # Display all VMs with the cheapest ones on top for each region
-    st.title("All Azure VM Pricing (Cheapest on top for each region)")
-    st.dataframe(filtered_df.sort_values(by=['Region', 'Price']))
-
-    # Run the Streamlit app
-    if __name__ == '__main__':
-        st.caption("Made with Love; Team Brio   ")
+# Display Azure VM pricing data
+st.dataframe(azure_df)
