@@ -4,12 +4,18 @@ import pandas as pd
 
 # Function to fetch Azure VM pricing data
 def fetch_azure_vm_prices():
-    url = "https://catalogapi.azure.com/skus?api-version=2023-05-01-preview&serviceFamily=Compute&service=Virtual Machines&language=en&locations=US East 2"
-    response = requests.get(url)
-    data = response.json()
-    
-    items = data['Items']
-    return items
+    try:
+        #url = "https://prices.azure.com/api/retail/prices?$filter=serviceName eq 'Virtual Machines'"
+        url = "https://catalogapi.azure.com/skus?api-version=2023-05-01-preview&serviceFamily=Compute&service=Virtual Machines&language=en&locations=US East 2"
+        response = requests.get(url)
+        data = response.json()
+        
+        # items = data['Items']
+        print(data)
+        return data
+    except Exception as e:
+        print(e)
+        return []
 
 # Function to process Azure VM pricing data
 def process_azure_data(items):
